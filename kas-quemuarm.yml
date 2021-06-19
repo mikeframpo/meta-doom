@@ -8,12 +8,56 @@ distro: poky
 repos:
   # This entry includes the repository where the config file is located
   # to the bblayers.conf:
-  meta-doom
+  meta-doom:
+    path: "sources/meta-doom"
 
   poky:
-    url: git://git.yoctoproject.org/poky
+    url: "git://git.yoctoproject.org/poky"
     refspec: yocto-3.2.2
+    path: "sources/poky"
     layers:
-      meta
-      meta-poky
-      meta-yocto-bsp
+      meta:
+      meta-poky:
+      meta-yocto-bsp:
+  
+  meta-openembedded:
+    url: "git://git.openembedded.org/meta-openembedded"
+    refspec: 29ca52c7826ad3044b53ccb5224016bd73abdb5c
+    path: "sources/meta-openembedded"
+    layers:
+      meta-oe:
+
+bblayers_conf_header:
+  standard: |
+    POKY_BBLAYERS_CONF_VERSION = "2"
+    BBPATH = "${TOPDIR}"
+    BBFILES ?= ""
+
+local_conf_header:
+  standard: |
+    CONF_VERSION = "1"
+    PACKAGE_CLASSES ?= "package_ipk"
+    USER_CLASSES ?= "buildstats image-mklibs image-prelink"
+    PATCHRESOLVE = "noop"
+
+  debug-tweaks:
+    EXTRA_IMAGE_FEATURES ?= "debug-tweaks"
+
+  diskmon: |
+    BB_DISKMON_DIRS ??= "\
+      STOPTASKS,${TMPDIR},1G,100K \
+      STOPTASKS,${DL_DIR},1G,100K \
+      STOPTASKS,${SSTATE_DIR},1G,100K \
+      STOPTASKS,/tmp,100M,100K \
+      ABORT,${TMPDIR},100M,1K \
+      ABORT,${DL_DIR},100M,1K \
+      ABORT,${SSTATE_DIR},100M,1K \
+      ABORT,/tmp,10M,1K"
+
+  #TODO: move most of this out to an image file
+  image-defs: |
+    IMAGE_INSTALL_append = " fb-test directfb directfb-examples libsdl2 gdbserver prboom-plus "
+    EXTRA_IMAGE_FEATURES += "ssh-server-dropbear"
+    IMAGE_ROOTFS_SIZE = "131072"
+    DISTRO_FEATURES += "directfb systemd"
+    VIRTUAL-RUNTIME_init_manager = "systemd"
