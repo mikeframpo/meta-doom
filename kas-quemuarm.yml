@@ -58,6 +58,6 @@ local_conf_header:
   image-defs: |
     IMAGE_INSTALL_append = " fb-test directfb directfb-examples libsdl2 gdbserver prboom-plus "
     EXTRA_IMAGE_FEATURES += "ssh-server-dropbear"
-    IMAGE_ROOTFS_SIZE = "131072"
+    IMAGE_ROOTFS_SIZE = "262144"
     DISTRO_FEATURES += "directfb systemd"
     VIRTUAL-RUNTIME_init_manager = "systemd"
